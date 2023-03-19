@@ -1,91 +1,135 @@
 let canvas = document.getElementById("theGrid");
 let ctx = canvas.getContext("2d")
+let teamColor
 let square = 80;
 let bikeX = 0;
 let bikeY = 0;
+let direction = "right";
+let gameOver = 0;
+
+
+
+//console.log(gameOver);
+//runGame();
+function startGame() {
+    let selectColorElement = document.getElementById("cycleColor")
+    let selectColor = selectColorElement.value;
+    teamColor = selectColor;
+    console.log(teamColor)
+    let gameInterval = setInterval(updateGame, 100);
+}
 //console.log(`hello`);
 let lightCycle = [
-    { x: 5, y: 0, velocity: 10, size: 5 },
-    { x: 10, y: 0, velocity: 10, size: 5 },
-    { x: 15, y: 0, velocity: 10, size: 5 },
-    { x: 20, y: 0, velocity: 10, size: 5 }
+    //front of cycle
+    { x: 5, y: 0, velocity: 5, size: 15 }, //x is the position on the x and y axis, velocity controls the number of spaces the light cycle will travel...pixels? the smaller the number the slower it will appear to move
+    //middle
+    { x: 10, y: 0, velocity: 5, size: 15, },
+    //back middle
+    { x: 15, y: 0, velocity: 5, size: 15, },
+    { x: 20, y: 0, velocity: 5, size: 15, },
+    { x: 25, y: 0, velocity: 5, size: 15, }
+
+
 
 ];//put lightcycle in array...??
-let direction = "down";
-//console.log(lightCycle.length);
-//console.log(lightCycle);
 
 
-//this function will draw the bike in its position on the canvas
-function drawBike(x, y, length) {
-    //  console.log('function draw bike')
-    ctx.fillStyle = "lightblue";
+
+
+
+
+function drawBike() {
+
+
     for (var i = 0; i < lightCycle.length; i++) {
         let arrayPosition = lightCycle[i];
-        ctx.fillStyle = "blue"; //set option to select blue or red
+        ctx.fillStyle = teamColor; //set option to select blue or red
         ctx.fillRect(arrayPosition.x, arrayPosition.y, arrayPosition.size, arrayPosition.size);
-        console.log(`array position${arrayPosition.size}`);
-        //ctx.fillRect(x - i * 5, y, 10, 10);
-        // console.log(i);
-        //  console.log(length);
+
+
+        //  console.log(`array position${arrayPosition.x}`);
+
     }
 }
-//drawBike(bikeX, bikeY, 50)
+
 
 //function will run the game call all functions from here.
 function updateGame() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    updateBike();
-    changeDirection();
-    drawBike(lightCycle.x, lightCycle.y, lightCycle.length);
+    if (gameOver === 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        updateBike(direction);
+        drawBike();
+        checkOOB();
+        //console.log(gameOver);
+        // runGame();
+    }
+    else {
+        stopGame()
 
-    console.log('function update game');
-
+    }
 }
 
-function updateBike() {
-
-
-    for (let i = 0; i < lightCycle.length; i++) {
-        lightCycle[i].x += lightCycle[i].velocity
-        lightCycle[i].y += lightCycle[i].velocity;
-    }
-
-
-
-
-
-}
-
-function changeDirection(direction) {
-    console.log(`function changeDirection, direction is ${direction}`);
-    // console.log(`steer${steer}`);
-    //let tail = lightCycle.pop //remove back of bike
-    let front = { x: lightCycle[0].x, y: lightCycle[0].y }
-    console.log(front);
-    console.log
-
-    switch (direction) {
-        case "left":
-            front.x -= 1;
-            break;
-        case "right":
-            front.x += 1;
-            break;
-        case "down":
-            front.y += 1;
-            break;
-        case "up":
-            front.y -= 1;
-            break;
-    }
-    lightCycle.unshift(front); //add to the front of the lightCycle array
-    for (let i = 1; i < lightCycle.length; i++) {
+function updateBike(axis) {
+    console.log(`axis ${axis}`)
+    console.log(lightCycle.length);
+    for (let i = lightCycle.length - 1; i > 0; i--) { //set to last position of array
+        console.log(`madeit ${lightCycle.length}`)
         lightCycle[i].x = lightCycle[i - 1].x;
         lightCycle[i].y = lightCycle[i - 1].y;
-        console.log(`loop working`)
     }
-    lightCycle.push
+    switch (axis) {
+        case "right":
+            lightCycle[0].x += lightCycle[0].velocity
+            break;
+        case "left":
+            lightCycle[0].x += -lightCycle[0].velocity
+            break;
+        case "up":
+            lightCycle[0].y = lightCycle[0].y - lightCycle[0].velocity
+            break;
+        case "down":
+            lightCycle[0].y += lightCycle[0].velocity
+            break;
+
+    }
+
+}
+function checkOOB() {
+    if (lightCycle[0].x < 0 || lightCycle[0].x >= canvas.width || lightCycle[0].y < 0 || lightCycle[0].y > canvas.height) {
+        alert("Game Over");
+        gameOver = 1;
+        clearInterval(gameInterval);
+
+    }
+    else {
+        gameOver = 0;
+    }
+}
+
+
+function changeDirection(axisDirection) {
+    switch (axisDirection) {
+        case "left":
+            console.log(`direction${direction}`)
+            // front.x -= 1;
+            direction = "left";
+            break;
+        case "right":
+            // front.x += 1;
+            console.log(`direction${direction}`)
+            direction = "right";
+            break;
+        case "down":
+            //  front.y += 1;
+
+            direction = "down";
+            break;
+        case "up":
+            //  front.y -= 1;
+
+            direction = "up";
+            break;
+    }
 
     //     if (bikeX < 0 || bikeX > canvas.width || bikeY < 0 || bikeY > canvas.height)
     //         //game over player1
@@ -119,5 +163,9 @@ window.addEventListener("keydown", function (event) {
     }
 
 });
-setInterval(updateGame, 1000);
+//function runGame() {
+// if (gameOver === 0) {
+//setInterval(updateGame, gameInterval);
+  //  }
 
+//}
