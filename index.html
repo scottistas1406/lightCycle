@@ -7,19 +7,24 @@
 </head>
 
 <body>
-    <h1>Avoid the Walls Program</h1>
-    <p>
+    <h1>Select your Team and Avoid the Walls Program</h1>
+    <p id="cars"><img src="bikes.jpg" alt="not there">
 
-
+    </p>
+    <p id="controls">
         <select name="cycle" id="cycleColor">
-
+            <option value="yellow">Yellow Cycle</option>
             <option value="red">Red Cycle</option>
             <option value="blue">Blue Cycle</option>
         </select>
         <button id="start" onclick="startGame()">StartLightCycle</button>
-    </p>
+        <button id="turbo" onclick="startGame()">ActivateTurbo</button>
+        <button id="restartGame" onclick="restartGame()">Restart Game</button>
 
-    <canvas id="theGrid" height=1000 width=700</canvas></canvas>
+    </p>
+    <p id="canvasGrid">
+        <canvas id="theGrid" height=500 width=400</canvas>
+    </p>
 
 </body>
 <script defer type="text/javascript" src="script.js"></script>
